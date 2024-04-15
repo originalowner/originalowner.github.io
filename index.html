@@ -3,18 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Age Calculator</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>User Management in Linux</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            padding: 20px;
+        }
+        .post {
+            background-color: #fff;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .post h1, .post h2 {
+            color: #333;
+        }
+        .post p {
+            color: #666;
+            line-height: 1.6;
+        }
+        .image {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        footer {
+            background-color: #333;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
+    <header>
+        <h1>User Management in Linux</h1>
+    </header>
     <div class="container">
-        <h1>Age Calculators</h1>
-        <label for="birthdate">Enter your birthdate:</label>
-        <input type="date" id="birthdate" required>
-        <button onclick="calculateAge()">Calculate Age</button>
-        <div id="result"></div>
+        <div class="post">
+            <p>In Linux, user management is a crucial aspect of system administration. It involves creating, modifying, and deleting user accounts, as well as managing their permissions and privileges.</p>
+            <h2>Introduction to User Management</h2>
+            <p>User management in Linux is fundamental for controlling access to resources and ensuring the security of the system. It encompasses various tasks, including:</p>
+            <ul>
+                <li>Creating user accounts</li>
+                <li>Assigning permissions</li>
+                <li>Managing groups</li>
+                <li>Setting password policies</li>
+                <li>Monitoring user activities</li>
+            </ul>
+            <h2>Creating User Accounts</h2>
+            <p>To create a new user account, you can use the `adduser` or `useradd` command, depending on your Linux distribution. For example:</p>
+            <pre>
+$ sudo adduser newuser
+</pre>
+            <p>This command prompts you to set a password for the new user and provides options to enter additional information like full name, phone number, etc.</p>
+            <h2>Managing User Permissions</h2>
+            <p>Linux uses a permissions system to regulate access to files and directories. Each file and directory has three types of permissions:</p>
+            <ul>
+                <li><strong>Read (r):</strong> Allows viewing the contents of the file or directory.</li>
+                <li><strong>Write (w):</strong> Allows modifying or deleting the file or directory.</li>
+                <li><strong>Execute (x):</strong> Allows executing the file or accessing the contents of the directory.</li>
+            </ul>
+            <p>You can use the `chmod` command to change permissions:</p>
+            <pre>
+$ chmod permissions filename
+</pre>
+            <p>For example, to give read, write, and execute permissions to the owner of a file:</p>
+            <pre>
+$ chmod u+rwx filename
+</pre>
+            <h2>Managing User Groups</h2>
+            <p>User groups provide a way to organize users with similar permissions. You can create a new group using the `groupadd` command:</p>
+            <pre>
+$ sudo groupadd groupname
+</pre>
+            <p>To add a user to an existing group:</p>
+            <pre>
+$ sudo usermod -aG groupname username
+</pre>
+            <h2>Setting Password Policies</h2>
+            <p>Implementing strong password policies is essential for enhancing the security of your Linux system. You can configure password policies using the `passwd` command and editing `/etc/login.defs`:</p>
+            <pre>
+$ sudo passwd --maxdays days username
+$ sudo passwd --minlen length username
+</pre>
+            <h2>Monitoring User Activities</h2>
+            <p>Monitoring user activities helps in identifying security breaches and suspicious behavior. Linux provides various tools for monitoring user activities, such as:</p>
+            <ul>
+                <li><strong>Last:</strong> Displays a list of users who logged in and out.</li>
+                <li><strong>W:</strong> Shows who is logged in and what they are doing.</li>
+                <li><strong>Faillog:</strong> Displays the login failure records.</li>
+                <li><strong>Auditd:</strong> Provides extensive auditing capabilities.</li>
+            </ul>
+            <p>By regularly monitoring user activities, you can detect unauthorized access attempts and take appropriate actions.</p>
+            <!-- Placeholder for more content and images -->
+        </div>
+        <div class="image">
+            <img src="https://source.unsplash.com/800x600/?linux" alt="Linux">
+            <p>Image by <a href="https://unsplash.com">Unsplash</a></p>
+        </div>
     </div>
-
-    <script src="script.js"></script>
+    <footer>
+        <p>&copy; 2024 My Blog</p>
+    </footer>
 </body>
 </html>
