@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kubernetes Security Best Practices | OpenFreeHost Blog</title>
+
+  <style>
+    /* ---------- Global Styles ---------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Segoe UI", sans-serif;
+    }
+    body {
+      background: #f7f9fb;
+      color: #333;
+      line-height: 1.7;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* ---------- Header / Nav ---------- */
+    header {
+      background: #2c3e50;
+      color: #ecf0f1;
+      padding: 15px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header h1 {
+      font-size: 22px;
+      font-weight: 600;
+    }
+    .user-buttons a {
+      background: #1abc9c;
+      padding: 8px 16px;
+      margin-left: 8px;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 4px;
+      font-weight: 500;
+      transition: opacity 0.2s;
+    }
+    .user-buttons a:hover {
+      opacity: 0.8;
+    }
+    nav.menu-bar {
+      background: #34495e;
+      display: flex;
+      justify-content: center;
+      padding: 12px;
+      gap: 25px;
+    }
+    nav.menu-bar a {
+      color: #ecf0f1;
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      transition: background 0.2s;
+      font-weight: 500;
+    }
+    nav.menu-bar a:hover,
+    nav.menu-bar a.active {
+      background: #1abc9c;
+    }
+
+    /* ---------- Hero / Article Header ---------- */
+    .post-hero {
+      background: #fff;
+      padding: 60px 20px;
+      border-bottom: 1px solid #e0e4e8;
+    }
+    .post-hero .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .post-title {
+      font-size: 36px;
+      font-weight: 700;
+      color: #2c3e50;
+      margin-bottom: 12px;
+    }
+    .post-meta {
+      color: #777;
+      font-size: 14px;
+    }
+    .post-meta span {
+      margin-right: 12px;
+    }
+    .post-tags {
+      margin-top: 16px;
+    }
+    .post-tags a {
+      display: inline-block;
+      margin-right: 8px;
+      padding: 6px 12px;
+      font-size: 13px;
+      color: #1abc9c;
+      text-decoration: none;
+      border: 1px solid #1abc9c;
+      border-radius: 16px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .post-tags a:hover {
+      background: #1abc9c;
+      color: #fff;
+    }
+
+    /* ---------- Content ---------- */
+    .post-content {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .post-content h2 {
+      font-size: 28px;
+      margin-top: 32px;
+      margin-bottom: 16px;
+      color: #2c3e50;
+    }
+    .post-content p {
+      margin-bottom: 20px;
+      color: #444;
+      font-size: 16px;
+    }
+
+    .post-content ul,
+    .post-content ol {
+      margin-left: 20px;
+      margin-bottom: 20px;
+    }
+    .post-content li {
+      margin-bottom: 10px;
+    }
+
+    /* Code block style */
+    pre {
+      background: #2d2d2d;
+      color: #f8f8f2;
+      padding: 20px;
+      border-radius: 6px;
+      overflow-x: auto;
+      margin-bottom: 24px;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+    pre code {
+      background: none;
+      color: inherit;
+      font-family: "Courier New", Courier, monospace;
+    }
+
+    /* Inline code */
+    .post-content code {
+      background: #e0e4e8;
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 15px;
+    }
+
+    /* Blockquote */
+    blockquote {
+      border-left: 4px solid #1abc9c;
+      padding-left: 16px;
+      margin: 24px 0;
+      color: #555;
+      font-style: italic;
+    }
+
+    /* Featured Image */
+    .post-image {
+      width: 100%;
+      margin: 30px 0;
+      border-radius: 6px;
+      object-fit: cover;
+    }
+
+    /* ---------- Footer ---------- */
+    footer {
+      background: #2c3e50;
+      color: #ecf0f1;
+      text-align: center;
+      padding: 16px;
+      margin-top: auto;
+      font-size: 14px;
+    }
+
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>OpenFreeHost</h1>
+    <div class="user-buttons">
+      <a href="login.html">Login</a>
+      <a href="register.html">Register</a>
+    </div>
+  </header>
+
+  <nav class="menu-bar">
+    <a href="index.html">Home</a>
+    <a href="features.html">Features</a>
+    <a href="pricing.html">Pricing</a>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="contact.html">Contact</a>
+    <a href="blog.html" class="active">Blog</a>
+  </nav>
+
+  <!-- Article Hero / Header -->
+  <section class="post-hero">
+    <div class="container">
+      <h1 class="post-title">Kubernetes Security Best Practices on OpenFreeHost</h1>
+      <div class="post-meta">
+        <span>By Jane Developer</span>
+        <span>• November 15, 2025</span>
+        <span>• Engineering</span>
+      </div>
+      <div class="post-tags">
+        <a href="/blog/tags/engineering">Engineering</a>
+        <a href="/blog/tags/kubernetes">Kubernetes</a>
+        <a href="/blog/tags/security">Security</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <article class="post-content">
+    <div class="container">
+
+      <img class="post-image" src="https://via.placeholder.com/900x400/16a085/ffffff?text=Kubernetes+Security" alt="Kubernetes Security Illustration">
+
+      <p>Kubernetes is a powerful orchestration system, but with that power comes responsibility. On OpenFreeHost, we run a multi-tenant Kubernetes architecture, which means we must be especially careful about how we secure workloads, isolate namespaces, and protect the control plane. In this post, we’ll walk through our best practices for Kubernetes security.</p>
+
+      <h2>1. Use Role-Based Access Control (RBAC)</h2>
+      <p>RBAC is fundamental to securing Kubernetes clusters. By defining roles and role bindings carefully, you can ensure that users and service accounts have only the permissions they need.</p>
+      <ul>
+        <li>Create fine-grained roles rather than using cluster-admin everywhere.</li>
+        <li>Use `Role` for namespace-level permissions and `ClusterRole` when you really need cluster-wide permissions.</li>
+        <li>Bind service accounts to roles using `RoleBinding` or `ClusterRoleBinding`.</li>
+      </ul>
+
+      <pre><code>apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: prod
+  name: pod-reader
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "watch", "list"]
+      </code></pre>
+
+      <h2>2. Network Policies for Pod Isolation</h2>
+      <p>NetworkPolicies give you control over how pods communicate with each other and with external endpoints. This is key in a shared environment.</p>
+      <ul>
+        <li>Define ingress and egress rules for each namespace.</li>
+        <li>Use default deny policies, then explicitly allow traffic that is required.</li>
+        <li>Segment critical workloads into their own namespaces and apply strict policies.</li>
+      </ul>
+
+      <pre><code>apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny
+  namespace: prod
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+      </code></pre>
+
+      <h2>3. Use Pod Security Standards / Admission Controllers</h2>
+      <p>To enforce security constraints, use built-in Pod Security Standards or enforce them via admission controllers:</p>
+      <ul>
+        <li>Restrict privileged mode, host networking, and running as root.</li>
+        <li>Use <code>PodSecurityPolicy</code> (if your Kubernetes version supports it) or migrate to the newer <code>Pod Security Admission</code>.</li>
+        <li>Define baseline or restricted policies depending on your risk profile.</li>
+      </ul>
+
+      <h2>4. Secrets Management</h2>
+      <p>Storing secrets securely is non-negotiable. Here’s how we do it on OpenFreeHost:</p>
+      <ul>
+        <li>Use Kubernetes `Secret` objects to store credentials.</li>
+        <li>Enable encryption at rest for Secret data in etcd.</li>
+        <li>Limit access to Secrets via RBAC – only the pods that need them should have access.</li>
+      </ul>
+
+      <h2>5. Secure the Control Plane</h2>
+      <p>The control plane (API server, etcd, controllers) is the brain of your cluster. Protect it!</p>
+      <ul>
+        <li>Use TLS certificates for all control plane components.</li>
+        <li>Enable API server authentication and authorization.</li>
+        <li>Restrict etcd access to only the control plane components and back up your etcd data securely.</li>
+      </ul>
+
+      <h2>6. Regularly Patch and Upgrade</h2>
+      <p>Kubernetes and its components change fast; security vulnerabilities are regularly discovered. Our upgrade strategy includes:</p>
+      <ul>
+        <li>Running the latest stable Kubernetes minor version.</li>
+        <li>Using automation (CI/CD) to apply patches in a rollout-safe manner.</li>
+        <li>Maintaining canary namespaces or clusters to test upgrades before applying to production.</li>
+      </ul>
+
+      <h2>7. Audit Logging and Monitoring</h2>
+      <p>Visibility is critical. Without proper logs, attacks or misconfigurations may go unnoticed.</p>
+      <ul>
+        <li>Enable Kubernetes audit logs, and send them to a centralized, immutable storage.</li>
+        <li>Monitor metrics using Prometheus or similar and alert on suspicious patterns (e.g., high API server error rates).</li>
+        <li>Use tools like Falco or kube-bench to run security checks continuously.</li>
+      </ul>
+
+      <blockquote>
+        “Security is not a one-time checkbox — it's a continuous process of observing, reacting, and improving.”  
+      </blockquote>
+
+      <h2>8. Use Namespaces for Multi-tenancy</h2>
+      <p>Namespaces help isolate different users or teams. On OpenFreeHost, we separate workloads in dedicated namespaces, and enforce resource quotas:</p>
+      <ul>
+        <li>Define resource quotas (CPU, memory) at namespace level.</li>
+        <li>Use LimitRanges to enforce minimum and maximum resource limits.</li>
+        <li>Combine namespaces with NetworkPolicies for strong isolation.</li>
+      </ul>
+
+      <h2>9. Use Admission Webhooks for Policy Enforcement</h2>
+      <p>Admission webhooks let you enforce custom policies, like mandatory security annotations or label checks.</p>
+      <ul>
+        <li>Use validating webhooks to reject pods that don’t meet your security requirements.</li>
+        <li>Use mutating webhooks to inject sidecars or security-related metadata.</li>
+        <li>Leverage open-source tools like OPA (Open Policy Agent) for policy enforcement.</li>
+      </ul>
+
+      <h2>10. Secure Container Images</h2>
+      <p>Your containers must be safe too. Here's how we handle image security:</p>
+      <ul>
+        <li>Use signed container images (e.g., using Notary or Cosign).</li>
+        <li>Scan images for vulnerabilities using tools like Trivy or Clair.</li>
+        <li>Run containers with a non-root user where possible.</li>
+      </ul>
+
+      <h2>Conclusion</h2>
+      <p>Implementing these best practices helps OpenFreeHost maintain a secure, reliable, and performant Kubernetes environment. Security in Kubernetes is multi-layered — from access control, isolation, immutable infrastructure, to monitoring. By staying vigilant, automating processes, and adopting industry-proven tools, you can protect both your cluster and your users’ workloads.</p>
+
+      <p>If you’d like to dive deeper, stay tuned for upcoming posts where we’ll discuss how we do CI/CD with Kubernetes, backup strategies for etcd, and more.</p>
+
+    </div>
+  </article>
+
+  <footer>
+    © 2025 OpenFreeHost | All rights reserved.
+  </footer>
+</body>
+</html>
