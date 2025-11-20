@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Essential Linux Commands Every DevOps Engineer Should Know | OpenFreeHost Blog</title>
+
+  <style>
+    /* ---------- Global Styles ---------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Segoe UI", sans-serif;
+    }
+    body {
+      background: #f7f9fb;
+      color: #333;
+      line-height: 1.7;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* ---------- Header / Nav ---------- */
+    header {
+      background: #2c3e50;
+      color: #ecf0f1;
+      padding: 15px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header h1 {
+      font-size: 22px;
+      font-weight: 600;
+    }
+    .user-buttons a {
+      background: #1abc9c;
+      padding: 8px 16px;
+      margin-left: 8px;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 4px;
+      font-weight: 500;
+      transition: opacity 0.2s;
+    }
+    .user-buttons a:hover {
+      opacity: 0.8;
+    }
+    nav.menu-bar {
+      background: #34495e;
+      display: flex;
+      justify-content: center;
+      padding: 12px;
+      gap: 25px;
+    }
+    nav.menu-bar a {
+      color: #ecf0f1;
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      transition: background 0.2s;
+      font-weight: 500;
+    }
+    nav.menu-bar a:hover,
+    nav.menu-bar a.active {
+      background: #1abc9c;
+    }
+
+    /* ---------- Hero / Article Header ---------- */
+    .post-hero {
+      background: #fff;
+      padding: 60px 20px;
+      border-bottom: 1px solid #e0e4e8;
+    }
+    .post-hero .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .post-title {
+      font-size: 36px;
+      font-weight: 700;
+      color: #2c3e50;
+      margin-bottom: 12px;
+    }
+    .post-meta {
+      color: #777;
+      font-size: 14px;
+    }
+    .post-meta span {
+      margin-right: 12px;
+    }
+    .post-tags {
+      margin-top: 16px;
+    }
+    .post-tags a {
+      display: inline-block;
+      margin-right: 8px;
+      padding: 6px 12px;
+      font-size: 13px;
+      color: #1abc9c;
+      text-decoration: none;
+      border: 1px solid #1abc9c;
+      border-radius: 16px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .post-tags a:hover {
+      background: #1abc9c;
+      color: #fff;
+    }
+
+    /* ---------- Layout Wrapper for Sidebar ---------- */
+    .content-wrapper {
+      display: flex;
+      gap: 40px;
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    /* ---------- Blog Content ---------- */
+    .post-content {
+      flex: 1;
+    }
+    .post-content h2 {
+      font-size: 28px;
+      margin-top: 32px;
+      margin-bottom: 16px;
+      color: #2c3e50;
+    }
+    .post-content p {
+      margin-bottom: 20px;
+      color: #444;
+      font-size: 16px;
+    }
+    .post-content ul,
+    .post-content ol {
+      margin-left: 20px;
+      margin-bottom: 20px;
+    }
+    .post-content li {
+      margin-bottom: 10px;
+    }
+    pre {
+      background: #2d2d2d;
+      color: #f8f8f2;
+      padding: 20px;
+      border-radius: 6px;
+      overflow-x: auto;
+      margin-bottom: 24px;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+    .post-content code {
+      background: #00000000;
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+    blockquote {
+      border-left: 4px solid #1abc9c;
+      padding-left: 16px;
+      margin: 24px 0;
+      color: #555;
+      font-style: italic;
+    }
+    .post-image {
+      width: 100%;
+      margin: 30px 0;
+      border-radius: 6px;
+      object-fit: cover;
+    }
+
+    /* --- Sidebar Wrapper --- */
+.sidebar {
+  width: 300px;
+  flex-shrink: 0;
+  height: fit-content;
+
+  /* Glassmorphic card look */
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 12px;
+
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+
+  box-shadow: 0px 8px 24px rgba(0,0,0,0.08);
+}
+
+/* Fade-in Reveal Animation */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.8s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* --- Sidebar Cards --- */
+.sidebar-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid #e3e7eb;
+  box-shadow: 0px 4px 12px rgba(0,0,0,0.04);
+  transition: 0.3s ease;
+}
+
+.sidebar-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0px 8px 20px rgba(0,0,0,0.10);
+}
+
+/* Headings */
+.sidebar-card h3 {
+  font-size: 20px;
+  margin-bottom: 16px;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+/* --- Search Box --- */
+.search-box {
+  position: relative;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 12px 40px 12px 14px;
+  border: 1px solid #ccd2da;
+  border-radius: 8px;
+  outline: none;
+  transition: 0.3s;
+}
+
+.search-box input:focus {
+  border-color: #1abc9c;
+  box-shadow: 0 0 0 3px rgba(26,188,156,0.2);
+}
+
+.search-box i {
+  position: absolute;
+  right: 14px;
+  top: 13px;
+  color: #8c9aa9;
+}
+
+/* --- Modern List --- */
+.modern-list {
+  list-style: none;
+  padding: 0;
+}
+
+.modern-list li {
+  margin-bottom: 14px;
+}
+
+.modern-list li a {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+
+  text-decoration: none;
+  color: #1abc9c;
+  font-size: 15px;
+  line-height: 1.4;
+
+  padding: 10px 12px;
+  border-radius: 8px;
+
+  transition: 0.25s ease;
+}
+
+.modern-list li a i {
+  margin-top: 2px;
+}
+
+.modern-list li a:hover {
+  background: #e8f8f5;
+  transform: translateX(6px);
+  color: #16a085;
+}
+
+/* --- Tag Cloud --- */
+.tag-cloud a {
+  display: inline-block;
+  margin: 5px;
+  padding: 6px 12px;
+
+  background: #eef7f6;
+  color: #1abc9c;
+  font-size: 13px;
+
+  text-decoration: none;
+  border-radius: 20px;
+  transition: 0.3s ease;
+}
+
+.tag-cloud a:hover {
+  background: #1abc9c;
+  color: white;
+  transform: translateY(-2px);
+}
+
+
+    /* --- Bottom Section Wrapper --- */
+.post-bottom-section {
+  margin-top: 70px;
+  padding-top: 50px;
+  border-top: 1px solid #e4e6eb;
+}
+
+/* Fade-in Animation */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.8s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* --- Prev/Next Navigation --- */
+.post-navigation {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 45px;
+  gap: 20px;
+}
+
+.post-navigation a {
+  background: #ffffff;
+  padding: 16px 20px;
+  border-radius: 8px;
+  border: 1px solid #dbe1e7;
+  text-decoration: none;
+  font-weight: 600;
+  color: #1abc9c;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: 0.3s ease;
+  box-shadow: 0px 3px 10px rgba(0,0,0,0.05);
+}
+
+.post-navigation a:hover {
+  background: #1abc9c;
+  color: white;
+  transform: translateY(-3px);
+  box-shadow: 0px 8px 16px rgba(26, 188, 156, 0.3);
+}
+
+.post-navigation .arrow {
+  font-size: 18px;
+  transition: 0.3s;
+}
+
+.prev-post:hover .arrow {
+  transform: translateX(-4px);
+}
+
+.next-post:hover .arrow {
+  transform: translateX(4px);
+}
+
+/* --- About Author --- */
+.about-author {
+  display: flex;
+  gap: 20px;
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 10px;
+  border: 1px solid #dce1e8;
+  box-shadow: 0px 4px 14px rgba(0,0,0,0.05);
+  margin-bottom: 45px;
+  transition: 0.3s ease;
+}
+
+.about-author:hover {
+  transform: translateY(-3px);
+  box-shadow: 0px 10px 20px rgba(0,0,0,0.08);
+}
+
+.about-author img {
+  width: 95px;
+  height: 95px;
+  border-radius: 50%;
+  border: 3px solid #1abc9c;
+}
+
+.about-author h3 {
+  margin-bottom: 10px;
+  color: #2c3e50;
+  font-size: 20px;
+}
+
+/* --- Related Posts Title --- */
+.related-posts h3 {
+  margin-bottom: 22px;
+  color: #2c3e50;
+  font-size: 22px;
+}
+
+/* --- Grid Layout --- */
+.related-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 25px;
+}
+
+/* --- Card --- */
+.related-card {
+  background: #ffffff;
+  border-radius: 10px;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  border: 1px solid #dce1e8;
+  box-shadow: 0px 4px 12px rgba(0,0,0,0.05);
+  transition: 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+}
+
+.related-card img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+}
+
+.related-content {
+  padding: 16px;
+}
+
+.related-card h4 {
+  font-size: 17px;
+  color: #2c3e50;
+  line-height: 1.4;
+  transition: 0.3s ease;
+}
+
+/* Hover Effects */
+.related-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0px 10px 25px rgba(0,0,0,0.10);
+  border-color: #1abc9c;
+}
+
+.related-card:hover h4 {
+  color: #1abc9c;
+}
+
+
+
+    /* ---------- Footer Section ---------- */
+footer.footer {
+  background: linear-gradient(135deg, #0d1b2a, #1b263b, #415a77);
+  color: #e0e8f9;
+  padding: 50px 20px 25px;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.footer-top {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 40px;
+  max-width: 1300px;
+  margin: auto;
+}
+
+.footer-brand h2 {
+  font-size: 26px;
+  margin-bottom: 10px;
+  color: #fff;
+}
+
+.footer-brand p {
+  opacity: 0.8;
+}
+
+.social-links a {
+  font-size: 20px;
+  margin-right: 12px;
+  color: #e0e8f9;
+  transition: 0.3s;
+}
+
+.social-links a:hover {
+  color: #00d4ff;
+  transform: translateY(-3px);
+}
+
+.footer-links h3,
+.footer-newsletter h3 {
+  margin-bottom: 12px;
+  font-size: 20px;
+  color: #fff;
+}
+
+.footer-links a {
+  display: block;
+  color: #ccd6f6;
+  margin-bottom: 8px;
+  text-decoration: none;
+  transition: 0.2s;
+}
+
+.footer-links a:hover {
+  color: #00d4ff;
+  transform: translateX(5px);
+}
+
+.footer-newsletter p {
+  opacity: 0.85;
+}
+
+.newsletter-box {
+  margin-top: 12px;
+  display: flex;
+  background: rgba(255, 255, 255, 0.07);
+  padding: 5px;
+  border-radius: 6px;
+}
+
+.newsletter-box input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 10px;
+  color: white;
+}
+
+.newsletter-box button {
+  padding: 10px 18px;
+  background: #00d4ff;
+  border: none;
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: 0.3s;
+}
+
+.newsletter-box button:hover {
+  background: #00a6d6;
+}
+
+#newsletterMessage {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #00d4ff;
+  min-height: 20px;
+}
+
+/* Bottom */
+.footer-bottom {
+  text-align: center;
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  opacity: 0.8;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .newsletter-box {
+    flex-direction: column;
+  }
+
+  .newsletter-box button {
+    margin-top: 8px;
+    width: 100%;
+  }
+
+  .content-wrapper {
+    flex-direction: column;
+  }
+      .sidebar {
+        width: 100%;
+      }
+      .post-navigation {
+        flex-direction: column;
+        gap: 15px;
+      }
+}
+    
+
+   
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>OpenFreeHost</h1>
+    <div class="user-buttons">
+      <a href="/login/">Login</a>
+      <a href="/register/">Register</a>
+    </div>
+  </header>
+
+  <nav class="menu-bar">
+    <a href="/">Home</a>
+    <a href="/features/">Features</a>
+    <a href="/blog/" class="active">Blog</a>
+    <a href="/about-us/">About-Us</a>
+    <a href="/contact-us/">Contact-Us</a>
+  </nav>
+
+  <!-- Article Hero -->
+  <section class="post-hero">
+    <div class="container">
+      <h1 class="post-title">Essential Linux Commands Every DevOps Engineer Should Know</h1>
+      <div class="post-meta">
+        <span>By Admin</span>
+        <span>• November 19, 2025</span>
+        <span>• Linux</span>
+      </div>
+      <div class="post-tags">
+        <a href="/blog/tags/linux/">Linux</a>
+        <a href="/blog/tags/basic/">Basic</a>
+        <a href="/blog/tags/commands/">Commands</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content + Sidebar -->
+  <div class="content-wrapper">
+
+    <!-- Main Article -->
+    <article class="post-content">
+
+      <img class="post-image" src="/blog/image.webp" alt="Essential Linux Commands Every DevOps Engineer Should Know">
+
+      <p>
+        Whether you’re a beginner or a DevOps engineer, mastering Linux commands is essential for
+        working with servers, automation, containers, and cloud infrastructure. This guide covers the
+        top 20 Linux commands you’ll use daily — with examples and real-world use cases.
+      </p>
+
+      <h2>1. ls – List Files</h2>
+      <p>Lists directory contents.</p>
+<pre><code>ls -lah</code></pre>
+
+      <h2>2. cd – Change Directory</h2>
+<pre><code>cd /var/log</code></pre>
+
+      <h2>3. pwd – Show Current Directory</h2>
+<pre><code>pwd</code></pre>
+
+      <h2>4. mkdir – Create Directories</h2>
+<pre><code>mkdir new_folder</code></pre>
+
+      <h2>5. rm – Remove Files and Folders</h2>
+<pre><code>rm -rf /tmp/test</code></pre>
+
+      <h2>6. cp – Copy Files</h2>
+<pre><code>cp file.txt /backup/</code></pre>
+
+      <h2>7. mv – Move or Rename</h2>
+<pre><code>mv oldname.txt newname.txt</code></pre>
+
+      <h2>8. cat – View File Contents</h2>
+<pre><code>cat /etc/passwd</code></pre>
+
+      <h2>9. tail – View Last Lines of a File</h2>
+<pre><code>tail -f /var/log/syslog</code></pre>
+
+      <h2>10. grep – Search Inside Files</h2>
+<pre><code>grep -R "error" /var/log</code></pre>
+
+      <h2>11. find – Search for Files</h2>
+<pre><code>find / -name "config.yaml"</code></pre>
+
+      <h2>12. top / htop – System Monitoring</h2>
+<pre><code>top</code></pre>
+
+      <h2>13. du – Disk Usage</h2>
+<pre><code>du -sh *</code></pre>
+
+      <h2>14. df – Disk Space</h2>
+<pre><code>df -h</code></pre>
+
+      <h2>15. chmod – File Permissions</h2>
+<pre><code>chmod 755 script.sh</code></pre>
+
+      <h2>16. chown – Change File Ownership</h2>
+<pre><code>chown user:group file.txt</code></pre>
+
+      <h2>17. systemctl – Manage Services</h2>
+<pre><code>systemctl status nginx</code></pre>
+
+      <h2>18. ps – Running Processes</h2>
+<pre><code>ps aux | grep ssh</code></pre>
+
+      <h2>19. wget / curl – Download Files</h2>
+<pre><code>wget https://example.com/file</code></pre>
+
+      <h2>20. ssh – Connect to Remote Servers</h2>
+<pre><code>ssh user@192.168.1.10</code></pre>
+
+      <h2>Conclusion</h2>
+      <p>
+        These 20 commands form the foundation of Linux system administration and DevOps workflows.
+        Master them, and you’ll be able to navigate any server, troubleshoot issues faster, and work
+        more efficiently with automation and cloud tools.
+      </p>
+
+      <!-- ==== Dashing Bottom Section ==== -->
+<section class="post-bottom-section">
+
+  <!-- Navigation -->
+  <div class="post-navigation reveal">
+    <a class="prev-post" href="/blog/essential-linux-commands-for-devops-engineers/">
+      <span class="arrow">←</span> Previous Article: Essential Linux Commands Every DevOps Engineer Should Know
+    </a>
+    <a class="next-post" href="/blog/how-to-harden-a-linux-server-for-production/">
+      Next Article: How to Harden a Linux Server for Production <span class="arrow">→</span>
+    </a>
+  </div>
+
+  <!-- Author Box -->
+  <div class="about-author reveal">
+    <img src="/blog/image.webp" alt="Author Avatar">
+    <div>
+      <h3>About the Author – Admin</h3>
+      <p>
+        Admin is a cloud infrastructure engineer at OpenFreeHost, specializing in Kubernetes,
+        container security, and DevOps automation. She writes about scalable architecture and
+        modern cloud tooling.
+      </p>
+    </div>
+  </div>
+
+  <!-- Related Posts -->
+<div class="related-posts reveal">
+  <h3>Related Posts</h3>
+
+  <div class="related-grid">
+
+    <a class="related-card" href="/blog/systemd-deep-dive-managing-linux-services/">
+      <img src="/blog/image.webp" alt="Systemd Guide">
+      <div class="related-content">
+        <h4>Systemd Deep Dive: Managing Services Like a Pro</h4>
+      </div>
+    </a>
+
+    <a class="related-card" href="/blog/shell-scripting-automation-examples-and-use-cases/">
+      <img src="/blog/image.webp" alt="Shell Scripting Automation">
+      <div class="related-content">
+        <h4>Shell Scripting Automation: Real-World Examples and Use Cases</h4>
+      </div>
+    </a>
+
+    <a class="related-card" href="/blog/linux-file-system-hierarchy-explained/">
+      <img src="/blog/image.webp" alt="Linux FHS Explained">
+      <div class="related-content">
+        <h4>Understanding Linux File System Hierarchy (FHS) in Depth</h4>
+      </div>
+    </a>
+
+    <a class="related-card" href="/blog/linux-file-system-hierarchy-explained/">
+      <img src="/blog/image.webp" alt="Linux FHS Explained">
+      <div class="related-content">
+        <h4>Understanding Linux File System Hierarchy (FHS) in Depth</h4>
+      </div>
+    </a>
+
+  </div>
+</div>
+
+</section>
+<!-- ==== End Dashing Bottom Section ==== -->
+
+    </article>
+
+    <!-- Sidebar -->
+<aside class="sidebar reveal">
+
+  <!-- Search -->
+  <div class="sidebar-card">
+    <h3>Search</h3>
+    <div class="search-box">
+      <input type="text" id="sidebarSearch" placeholder="Search articles..." />
+      <i class="fa-solid fa-magnifying-glass"></i>
+    </div>
+  </div>
+
+  <!-- Recent Posts -->
+  <div class="sidebar-card">
+    <h3>Recent Posts</h3>
+    <ul class="modern-list">
+      <li><a href="/blog/linux-performance-troubleshooting-guide/"><i class="fa-solid fa-file-alt"></i> Troubleshooting Linux Performance Using top, htop, iostat, vmstat</a></li>
+      <li><a href="/blog/linux-networking-tools-ip-ss-tcpdump-netplan/"><i class="fa-solid fa-network-wired"></i> Networking on Linux: ip, ss, tcpdump, and Netplan Explained</a></li>
+      <li><a href="/blog/selinux-vs-apparmor-security-comparison/"><i class="fa-solid fa-shield-halved"></i> SELinux vs AppArmor: Which Is Right for Your Environment?</a></li>
+    </ul>
+  </div>
+
+  <!-- Categories -->
+  <div class="sidebar-card">
+    <h3>Categories</h3>
+    <ul class="modern-list categories">
+      <li><a href="/blog/categories/engineering/"><i class="fa-solid fa-gears"></i> Engineering</a></li>
+      <li><a href="/blog/categories/security/"><i class="fa-solid fa-lock"></i> Security</a></li>
+      <li><a href="/blog/categories/kubernetes/"><i class="fa-brands fa-docker"></i> Kubernetes</a></li>
+      <li><a href="/blog/categories/devops/"><i class="fa-solid fa-code-branch"></i> DevOps</a></li>
+    </ul>
+  </div>
+
+  <!-- Tags -->
+  <div class="sidebar-card">
+    <h3>Tags</h3>
+    <div class="tag-cloud">
+      <a href="/blog/tags/k8s/">k8s</a>
+      <a href="/blog/tags/security/">security</a>
+      <a href="/blog/tags/cloud/">cloud</a>
+      <a href="/blog/tags/containers/">containers</a>
+      <a href="/blog/tags/devops/">devops</a>
+    </div>
+  </div>
+
+</aside>
+
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+
+  </div>
+
+
+    <footer class="footer">
+        <div class="footer-top">
+            <div class="footer-brand">
+                <h2>OpenFreeHost</h2>
+                <p>Your reliable free hosting service with unlimited potential.</p>
+
+                <div class="social-links">
+                    <a href="/"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="/"><i class="fa-brands fa-x-twitter"></i></a>
+                    <a href="/"><i class="fa-brands fa-github"></i></a>
+                    <a href="/"><i class="fa-brands fa-youtube"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-links">
+                <h3>Hosting</h3>
+                <a href="/">Free Hosting</a>
+                <a href="/">Premium Hosting</a>
+                <a href="/">Control Panel</a>
+                <a href="/">Uptime Monitor</a>
+            </div>
+
+            <div class="footer-links">
+                <h3>Company</h3>
+                <a href="/about-us/">About Us</a>
+                <a href="/blog/">Blog</a>
+                <a href="/careers/">Careers</a>
+                <a href="/contact-us/">Contact</a>
+            </div>
+
+            <div class="footer-newsletter">
+                <h3>Stay Updated</h3>
+                <p>Get updates about features, upgrades, and offers.</p>
+
+                <div class="newsletter-box">
+                    <input type="email" id="newsletterEmail" placeholder="Your email..." />
+                    <button onclick="subscribeNewsletter()">Subscribe</button>
+                </div>
+                <p id="newsletterMessage"></p>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            © 2025 OpenFreeHost — Free & Fast Web Hosting.
+        </div>
+    </footer>
+
+    <!-- Font Awesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script>
+        function subscribeNewsletter() {
+            const email = document.getElementById("newsletterEmail").value;
+            const message = document.getElementById("newsletterMessage");
+
+            if (!email.includes("@") || email.length < 5) {
+                message.style.color = "#ff6b6b";
+                message.textContent = "Please enter a valid email!";
+                return;
+            }
+
+            message.style.color = "#00ffcc";
+            message.textContent = "Thank you for subscribing! 🎉";
+
+            // Clear field
+            document.getElementById("newsletterEmail").value = "";
+        }
+    </script>
+    <script>
+      // Reveal on scroll effect
+function revealOnScroll() {
+  const reveals = document.querySelectorAll('.reveal');
+  
+  reveals.forEach(el => {
+    const elementTop = el.getBoundingClientRect().top;
+    const windowHeight = window.innerHeight;
+
+    if (elementTop < windowHeight - 50) {
+      el.classList.add('visible');
+    }
+  });
+}
+
+window.addEventListener('scroll', revealOnScroll);
+window.addEventListener('load', revealOnScroll);
+    </script>
+    <script>
+      document.getElementById("sidebarSearch").addEventListener("input", function () {
+  const query = this.value.toLowerCase();
+  const items = document.querySelectorAll(".modern-list li a");
+
+  items.forEach(item => {
+    const text = item.textContent.toLowerCase();
+    if (text.includes(query)) {
+      item.style.opacity = "1";
+      item.style.transform = "translateX(0)";
+    } else {
+      item.style.opacity = "0.3";
+      item.style.transform = "translateX(10px)";
+    }
+  });
+});
+
+    </script>
+</body>
+</html>
