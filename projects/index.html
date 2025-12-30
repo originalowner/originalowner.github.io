@@ -289,7 +289,8 @@
           </td>
           <td style="text-align:right;">
             <button class="btn btn-danger" onclick="deleteProject('${p.projectId}')">Delete</button>
-            <a href="project.html?projectId=${p.projectId}" class="btn btn-primary">Open</a>
+            //<a href="project.html?projectId=${p.projectId}" class="btn btn-primary">Open</a>
+            <a href="projects/${p.projectId}" class="btn btn-primary">Open</a>
           </td>`;
         table.appendChild(tr);
       });
