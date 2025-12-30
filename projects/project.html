@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project Files</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Segoe UI", sans-serif; }
+    body { background: #f4f6f9; color: #333; display: flex; flex-direction: column; min-height: 100vh; }
+
+    header { background: #2c3e50; color: #ecf0f1; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+    header h1 { font-size: 20px; }
+
+    .menu-bar { background: #34495e; padding: 10px 0; text-align: center; }
+    .menu-bar a { color: #ecf0f1; margin: 0 15px; text-decoration: none; font-weight: 500; }
+    .menu-bar a:hover { color: #1abc9c; }
+
+    .card { background: #fff; max-width: 1200px; margin: 20px auto; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    .card-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding: 1rem; background: #f1f5f9; }
+    .card-title { font-size: 1.2rem; font-weight: 600; }
+
+    .btn { cursor: pointer; padding: 8px 12px; border-radius: 5px; font-weight: 500; border: none; }
+    .btn-primary { background: #2563eb; color: #fff; }
+    .btn-primary:hover { background: #1d4ed8; }
+    .btn-danger { background: #dc2626; color: #fff; }
+    .btn-danger:hover { background: #b91c1c; }
+
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 12px 15px; border-bottom: 1px solid #e2e8f0; }
+    th { background: #f9fafb; text-align: left; }
+
+    footer { background: #2c3e50; color: #ecf0f1; text-align: center; padding: 10px; margin-top: auto; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Project Files</h1>
+  <button class="btn btn-primary" onclick="goBack()">← Back</button>
+</header>
+
+<nav class="menu-bar">
+  <a href="#">Overview</a>
+  <a href="#">Projects</a>
+  <a href="#">Settings</a>
+</nav>
+
+<main>
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title" id="projectName">Loading...</h3>
+      <div>
+        <input type="file" id="fileInput" style="display:none" multiple />
+        <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">+ Upload Files</button>
+      </div>
+    </div>
+
+    <table id="filesTable">
+      <thead>
+        <tr>
+          <th>File Name</th>
+          <th>Size (KB)</th>
+          <th>Last Modified</th>
+          <th style="text-align:right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td colspan="4">Loading files...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+
+<footer>&copy; 2025 My Dashboard | All rights reserved.</footer>
+
+<script>
+const API_BASE = "https://mprb5a7ypl.execute-api.ap-south-1.amazonaws.com"; // replace with your actual API
+const token = localStorage.getItem("token");
+const username = localStorage.getItem("username");
+const urlParams = new URLSearchParams(window.location.search);
+const projectId = urlParams.get("projectId");
+
+document.getElementById("projectName").innerText = `Project: ${projectId}`;
+
+function goBack() {
+  window.location.href = "dashboard.html";
+}
+
+// Load files
+async function loadFiles() {
+  const tableBody = document.querySelector("#filesTable tbody");
+  tableBody.innerHTML = "<tr><td colspan='4'>Loading...</td></tr>";
+  try {
+    const res = await fetch(`${API_BASE}/files?projectId=${projectId}`, {
+      headers: { Authorization: token }
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Failed to list files");
+
+    if (!data.files || data.files.length === 0) {
+      tableBody.innerHTML = "<tr><td colspan='4'>No files found.</td></tr>";
+      return;
+    }
+
+    tableBody.innerHTML = "";
+    data.files.forEach(f => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${f.name}</td>
+        <td>${(f.size / 1024).toFixed(1)}</td>
+        <td>${new Date(f.lastModified).toLocaleString()}</td>
+        <td style="text-align:right;">
+          <a href="${f.downloadUrl}" target="_blank" class="btn btn-primary">Download</a>
+          <button class="btn btn-danger" onclick="deleteFile('${f.key}')">Delete</button>
+        </td>
+      `;
+      tableBody.appendChild(tr);
+    });
+  } catch (err) {
+    tableBody.innerHTML = `<tr><td colspan='4' style='color:red;'>${err.message}</td></tr>`;
+  }
+}
+
+// Upload files (using presigned URL method)
+document.getElementById("fileInput").addEventListener("change", async (e) => {
+  const files = e.target.files;
+  if (!files.length) return;
+
+  console.log("📂 Files selected:", files);
+
+  for (let file of files) {
+    try {
+      console.log(`⏳ Getting presigned URL for ${file.name}...`);
+
+      // 1️⃣ Request presigned URL from backend
+      const presignRes = await fetch(
+        `${API_BASE}/files?projectId=${encodeURIComponent(projectId)}&presign=true&filename=${encodeURIComponent(file.name)}`,
+        {
+          method: "POST",
+          headers: { Authorization: token },
+        }
+      );
+
+      const presignData = await presignRes.json();
+      console.log("Presign response:", presignData);
+
+      if (!presignRes.ok || !presignData.url) {
+        alert(presignData.error || "Failed to get presigned URL");
+        continue;
+      }
+
+      // 2️⃣ Upload file directly to S3
+      console.log(`🚀 Uploading ${file.name} to S3...`);
+      const uploadRes = await fetch(presignData.url, {
+        method: "PUT",
+        headers: { "Content-Type": file.type || "application/octet-stream" },
+        body: file,
+      });
+
+      if (!uploadRes.ok) {
+        alert(`Upload failed for ${file.name}`);
+        continue;
+      }
+
+      console.log(`✅ File uploaded: ${file.name}`);
+    } catch (err) {
+      console.error("❌ Upload error:", err);
+      alert("Upload failed due to network error.");
+    }
+  }
+
+  alert("✅ All uploads complete!");
+  loadFiles();
+});
+
+// Delete file
+async function deleteFile(key) {
+  if (!confirm("Delete this file?")) return;
+  const res = await fetch(`${API_BASE}/files?projectId=${projectId}&key=${encodeURIComponent(key)}`, {
+    method: "DELETE",
+    headers: { Authorization: token }
+  });
+  const data = await res.json();
+  if (res.ok) {
+    alert("File deleted!");
+    loadFiles();
+  } else {
+    alert(data.error || "Failed to delete");
+  }
+}
+
+loadFiles();
+</script>
+</body>
+</html>
