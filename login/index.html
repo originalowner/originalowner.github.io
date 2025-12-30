@@ -177,7 +177,7 @@ async function login() {
         localStorage.setItem("token", data.token);
         localStorage.setItem("username", username);
       }
-      setTimeout(() => window.location.href = "projects", 2000);
+      setTimeout(() => window.location.href = "/projects", 2000);
     } else {
       msg.style.color = "red";
       msg.textContent = data.error || "Invalid username or password.";
