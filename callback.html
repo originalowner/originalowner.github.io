@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <p>Signing you in...</p>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get("code");
+
+    if (!code) {
+      document.body.innerText = "Login failed";
+    }
+
+    fetch("https://mprb5a7ypl.execute-api.ap-south-1.amazonaws.com/callback", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include", // IMPORTANT
+      body: JSON.stringify({ code })
+    })
+    .then(() => {
+      window.location.href = "/";
+    })
+    .catch(() => {
+      document.body.innerText = "Authentication error";
+    });
+  </script>
+</body>
+</html>
